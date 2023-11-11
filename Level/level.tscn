@@ -1,0 +1,113 @@
+[gd_scene load_steps=8 format=3 uid="uid://uvpjhc580rob"]
+
+[ext_resource type="Script" path="res://Level/Level.gd" id="1_ekv42"]
+[ext_resource type="PackedScene" uid="uid://b5wop2jsacu50" path="res://Bees/Basic/bee.tscn" id="2_iclgk"]
+
+[sub_resource type="Gradient" id="Gradient_ww6th"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0.296774, 0.774194)
+colors = PackedColorArray(0.96, 0.84736, 0.3456, 1, 1, 0.597743, 0.715266, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_82wcv"]
+gradient = SubResource("Gradient_ww6th")
+use_hdr = true
+fill_to = Vector2(1, 1)
+
+[sub_resource type="Curve2D" id="Curve2D_cb4o7"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -25, -25, 0, 0, 0, 0, 775, -25, 0, 0, 0, 0, 775, 775, 0, 0, 0, 0, -25, 775, 0, 0, 0, 0, -25, -25)
+}
+point_count = 5
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2d6nw"]
+size = Vector2(800, 25)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_v7mkj"]
+size = Vector2(25, 800)
+
+[node name="Level" type="Node2D"]
+script = ExtResource("1_ekv42")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+visible = false
+offset_right = 750.0
+offset_bottom = 750.0
+texture = SubResource("GradientTexture2D_82wcv")
+
+[node name="Path2D" type="Path2D" parent="."]
+curve = SubResource("Curve2D_cb4o7")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Path2D"]
+position = Vector2(-25, -25)
+
+[node name="HazTimer" type="Timer" parent="."]
+wait_time = 3.0
+autostart = true
+
+[node name="BeeTimer" type="Timer" parent="."]
+
+[node name="Walls" type="Node" parent="."]
+
+[node name="TopWall" type="StaticBody2D" parent="Walls" groups=["hazard"]]
+collision_layer = 4
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/TopWall"]
+position = Vector2(375, -12.5)
+shape = SubResource("RectangleShape2D_2d6nw")
+
+[node name="BottomWall" type="StaticBody2D" parent="Walls" groups=["hazard"]]
+collision_layer = 4
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/BottomWall"]
+position = Vector2(375, 762.5)
+shape = SubResource("RectangleShape2D_2d6nw")
+
+[node name="RightWall" type="StaticBody2D" parent="Walls" groups=["hazard"]]
+collision_layer = 4
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/RightWall"]
+position = Vector2(762.5, 375)
+shape = SubResource("RectangleShape2D_v7mkj")
+
+[node name="LeftWall" type="StaticBody2D" parent="Walls" groups=["hazard"]]
+collision_layer = 4
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Walls/LeftWall"]
+position = Vector2(-12.5, 375)
+shape = SubResource("RectangleShape2D_v7mkj")
+
+[node name="Bee" parent="." instance=ExtResource("2_iclgk")]
+position = Vector2(271, 264)
+
+[node name="Node" type="Node" parent="."]
+
+[node name="TopArea" type="Area2D" parent="Node"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Node/TopArea"]
+position = Vector2(375, -12.5)
+shape = SubResource("RectangleShape2D_2d6nw")
+
+[node name="BottomArea" type="Area2D" parent="Node"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Node/BottomArea"]
+position = Vector2(375, 762.5)
+shape = SubResource("RectangleShape2D_2d6nw")
+
+[node name="RightArea" type="Area2D" parent="Node"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Node/RightArea"]
+position = Vector2(762.5, 375)
+shape = SubResource("RectangleShape2D_v7mkj")
+
+[node name="LeftArea" type="Area2D" parent="Node"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Node/LeftArea"]
+position = Vector2(-12.5, 375)
+shape = SubResource("RectangleShape2D_v7mkj")
+
+[connection signal="timeout" from="HazTimer" to="." method="_haz_spawn"]
+[connection signal="timeout" from="BeeTimer" to="." method="_bee_spawn"]
