@@ -1,21 +1,15 @@
-[gd_scene load_steps=8 format=3 uid="uid://uvpjhc580rob"]
+[gd_scene load_steps=13 format=3 uid="uid://uvpjhc580rob"]
 
 [ext_resource type="Script" path="res://Level/Level.gd" id="1_ekv42"]
 [ext_resource type="PackedScene" uid="uid://b5wop2jsacu50" path="res://Bees/Basic/bee.tscn" id="2_iclgk"]
-
-[sub_resource type="Gradient" id="Gradient_ww6th"]
-interpolation_mode = 2
-offsets = PackedFloat32Array(0.296774, 0.774194)
-colors = PackedColorArray(0.96, 0.84736, 0.3456, 1, 1, 0.597743, 0.715266, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_82wcv"]
-gradient = SubResource("Gradient_ww6th")
-use_hdr = true
-fill_to = Vector2(1, 1)
+[ext_resource type="Texture2D" uid="uid://cpuhr5idrloim" path="res://Level/grass.png" id="3_bvah6"]
+[ext_resource type="PackedScene" uid="uid://b0i0v7264e51o" path="res://Obstacles/wasp.tscn" id="3_fqi4h"]
+[ext_resource type="PackedScene" uid="uid://dvbc17iu46lny" path="res://Warning/warning.tscn" id="4_qcv4i"]
+[ext_resource type="FontFile" uid="uid://bsf424vibmwro" path="res://Patriot-Black.otf" id="5_ctrl6"]
 
 [sub_resource type="Curve2D" id="Curve2D_cb4o7"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, -25, -25, 0, 0, 0, 0, 775, -25, 0, 0, 0, 0, 775, 775, 0, 0, 0, 0, -25, 775, 0, 0, 0, 0, -25, -25)
+"points": PackedVector2Array(0, 0, 0, 0, -400, -400, 0, 0, 0, 0, 400, -400, 0, 0, 0, 0, 400, 400, 0, 0, 0, 0, -400, 400, 0, 0, 0, 0, -400, -400)
 }
 point_count = 5
 
@@ -25,26 +19,56 @@ size = Vector2(800, 25)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_v7mkj"]
 size = Vector2(25, 800)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_unbph"]
+
+[sub_resource type="Animation" id="Animation_ausmy"]
+resource_name = "difficulty"
+length = 20.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("HazTimer:wait_time")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 20),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [3.0, 0.9]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2jgnd"]
+_data = {
+"difficulty": SubResource("Animation_ausmy")
+}
+
 [node name="Level" type="Node2D"]
 script = ExtResource("1_ekv42")
+basicBee = ExtResource("2_iclgk")
+wasp = ExtResource("3_fqi4h")
+hazWarn = ExtResource("4_qcv4i")
+launchStrength = 500
+waspSpeed = 20
 
 [node name="TextureRect" type="TextureRect" parent="."]
-visible = false
 offset_right = 750.0
 offset_bottom = 750.0
-texture = SubResource("GradientTexture2D_82wcv")
+texture = ExtResource("3_bvah6")
+expand_mode = 1
+stretch_mode = 1
 
 [node name="Path2D" type="Path2D" parent="."]
+position = Vector2(375, 375)
 curve = SubResource("Curve2D_cb4o7")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Path2D"]
-position = Vector2(-25, -25)
+position = Vector2(-400, -400)
 
 [node name="HazTimer" type="Timer" parent="."]
-wait_time = 3.0
-autostart = true
+wait_time = 2.776
 
 [node name="BeeTimer" type="Timer" parent="."]
+wait_time = 2.0
 
 [node name="Walls" type="Node" parent="."]
 
@@ -80,34 +104,75 @@ collision_mask = 3
 position = Vector2(-12.5, 375)
 shape = SubResource("RectangleShape2D_v7mkj")
 
-[node name="Bee" parent="." instance=ExtResource("2_iclgk")]
-position = Vector2(271, 264)
+[node name="Areas" type="Node" parent="."]
 
-[node name="Node" type="Node" parent="."]
+[node name="TopArea" type="Area2D" parent="Areas"]
+collision_layer = 16
+collision_mask = 8
 
-[node name="TopArea" type="Area2D" parent="Node"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Node/TopArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Areas/TopArea"]
 position = Vector2(375, -12.5)
 shape = SubResource("RectangleShape2D_2d6nw")
 
-[node name="BottomArea" type="Area2D" parent="Node"]
+[node name="BottomArea" type="Area2D" parent="Areas"]
+collision_layer = 16
+collision_mask = 8
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Node/BottomArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Areas/BottomArea"]
 position = Vector2(375, 762.5)
 shape = SubResource("RectangleShape2D_2d6nw")
 
-[node name="RightArea" type="Area2D" parent="Node"]
+[node name="RightArea" type="Area2D" parent="Areas"]
+collision_layer = 16
+collision_mask = 8
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Node/RightArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Areas/RightArea"]
 position = Vector2(762.5, 375)
 shape = SubResource("RectangleShape2D_v7mkj")
 
-[node name="LeftArea" type="Area2D" parent="Node"]
+[node name="LeftArea" type="Area2D" parent="Areas"]
+collision_layer = 16
+collision_mask = 8
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Node/LeftArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Areas/LeftArea"]
 position = Vector2(-12.5, 375)
 shape = SubResource("RectangleShape2D_v7mkj")
 
+[node name="LaunchPoint" type="Marker2D" parent="."]
+position = Vector2(375, 375)
+
+[node name="HighScore" type="Label" parent="."]
+offset_left = 425.0
+offset_top = 20.0
+offset_right = 475.0
+offset_bottom = 89.0
+theme_override_fonts/font = ExtResource("5_ctrl6")
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = SubResource("StyleBoxFlat_unbph")
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CurrScore" type="Label" parent="."]
+offset_left = 300.0
+offset_top = 20.0
+offset_right = 350.0
+offset_bottom = 89.0
+theme_override_fonts/font = ExtResource("5_ctrl6")
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = SubResource("StyleBoxFlat_unbph")
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_2jgnd")
+}
+
 [connection signal="timeout" from="HazTimer" to="." method="_haz_spawn"]
 [connection signal="timeout" from="BeeTimer" to="." method="_bee_spawn"]
+[connection signal="body_exited" from="Areas/TopArea" to="." method="_body_on_screen"]
+[connection signal="body_exited" from="Areas/BottomArea" to="." method="_body_on_screen"]
+[connection signal="body_exited" from="Areas/RightArea" to="." method="_body_on_screen"]
+[connection signal="body_exited" from="Areas/LeftArea" to="." method="_body_on_screen"]

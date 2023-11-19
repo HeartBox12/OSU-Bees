@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://b0i0v7264e51o"]
+
+[ext_resource type="Script" path="res://Obstacles/wasp.gd" id="1_q7qab"]
+[ext_resource type="Texture2D" uid="uid://deanpt8ynjawq" path="res://Obstacles/Wasp.png" id="1_rmo7j"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_31scm"]
+size = Vector2(56, 64)
+
+[node name="Node2D" type="StaticBody2D" groups=["hazard"]]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("1_q7qab")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_31scm")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("1_rmo7j")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+position = Vector2(-1.90735e-06, 1.90735e-06)
+scale = Vector2(2.8, 3.2)
+
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_offscreen"]

@@ -1,8 +1,8 @@
 [gd_scene load_steps=23 format=3 uid="uid://b5wop2jsacu50"]
 
-[ext_resource type="Texture2D" uid="uid://b7ukfcnavoi63" path="res://icon.svg" id="1_1f8ar"]
 [ext_resource type="Script" path="res://Bees/Basic/bee.gd" id="1_jiii3"]
 [ext_resource type="Texture2D" uid="uid://dnuvtb44b7hps" path="res://Bees/R.png" id="2_ah1j5"]
+[ext_resource type="Texture2D" uid="uid://byigo031ttvu8" path="res://Bees/Basic/Bee.png" id="3_jyafd"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pcejn"]
 atlas = ExtResource("2_ah1j5")
@@ -68,9 +68,9 @@ region = Rect2(128, 192, 64, 64)
 atlas = ExtResource("2_ah1j5")
 region = Rect2(192, 192, 64, 64)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_186iu"]
-atlas = ExtResource("1_1f8ar")
-region = Rect2(0, 0, 128, 128)
+[sub_resource type="AtlasTexture" id="AtlasTexture_sm81d"]
+atlas = ExtResource("3_jyafd")
+region = Rect2(0, 0, 16, 16)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_ch15x"]
 animations = [{
@@ -129,7 +129,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_186iu")
+"texture": SubResource("AtlasTexture_sm81d")
 }],
 "loop": true,
 "name": &"default",
@@ -137,11 +137,11 @@ animations = [{
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_3dmck"]
-radius = 64.0703
+radius = 33.0151
 
 [node name="Bee" type="RigidBody2D"]
-collision_layer = 0
-collision_mask = 0
+collision_layer = 8
+collision_mask = 16
 gravity_scale = 0.0
 max_contacts_reported = 1
 contact_monitor = true
@@ -149,9 +149,12 @@ can_sleep = false
 lock_rotation = true
 script = ExtResource("1_jiii3")
 flapSeverity = 40
-speed = 10
+speed = 15
+deathShock = 100000
+shockThresh = 200
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
+scale = Vector2(4, 4)
 sprite_frames = SubResource("SpriteFrames_ch15x")
 speed_scale = 5.0
 
@@ -161,6 +164,9 @@ shape = SubResource("CircleShape2D_3dmck")
 [node name="Timer" type="Timer" parent="."]
 autostart = true
 
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+
 [connection signal="body_entered" from="." to="." method="_on_hit"]
 [connection signal="animation_looped" from="Sprite" to="." method="_on_anim_over"]
 [connection signal="timeout" from="Timer" to="." method="_timer_flap"]
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_hit"]
